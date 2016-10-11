@@ -2,6 +2,12 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,7 +38,7 @@ public class ReadXMLFile
 				for (int j = 0; j < keyList.getLength(); j++)
 				{
 					Node innerNode = keyList.item(j);
-					if (innerNode.getNodeType() == Node.ELEMENT_NODE)
+					if (innerNode.getNodeType() == Node.ELEMENT_NODE && j <= 2)
 					{
 						Element eElement = (Element) innerNode;
 						int k = 0;
@@ -49,6 +55,35 @@ public class ReadXMLFile
 				}
 				System.out.println("========================================================");
 			}
+			File f = new File("C:\\Users\\gbrunyee\\Desktop\\CMS_Test\\ES_GENERAL.new.xml");
+
+			// Use a Transformer for output
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			Transformer transformer = tFactory.newTransformer();
+
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(f);
+			transformer.transform(source, result);
+		}
+		catch (TransformerConfigurationException tce)
+		{
+			System.out.println("* Transformer Factory error");
+			System.out.println(" " + tce.getMessage());
+
+			Throwable x = tce;
+			if (tce.getException() != null)
+				x = tce.getException();
+			x.printStackTrace();
+		}
+		catch (TransformerException te)
+		{
+			System.out.println("* Transformation error");
+			System.out.println(" " + te.getMessage());
+
+			Throwable x = te;
+			if (te.getException() != null)
+				x = te.getException();
+			x.printStackTrace();
 		}
 		catch (Exception e)
 		{
