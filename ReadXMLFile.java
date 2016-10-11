@@ -2,6 +2,7 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -48,6 +49,23 @@ public class ReadXMLFile
 						{
 							System.out.println((j + 1) / 2 + " Title: " + eElement.getElementsByTagName("wcm:element").item(k++).getTextContent());
 						}
+
+						// 2. CREATE A NEW KEY
+						if (sectionName.equals("FieldLabelList"))
+						{
+							Node sectionNode = sectionList.item(i);
+							Element newKey = doc.createElement("wcm:row");
+							Element newElement1 = doc.createElement("wcm:element");
+							newElement1.setAttribute("name", "field_name");
+							newElement1.appendChild(doc.createTextNode("GENERAL_MY_NEW_KEY"));
+							newKey.appendChild(newElement1);
+							Element newElement2 = doc.createElement("wcm:element");
+							newElement2.setAttribute("name", "title");
+							newElement2.appendChild(doc.createTextNode("Yes Please"));
+							newKey.appendChild(newElement2);
+							sectionNode.appendChild(newKey);
+						}
+
 						System.out.println(
 								(j + 1) / 2 + " Field Description: " + eElement.getElementsByTagName("wcm:element").item(k++).getTextContent());
 						System.out.println((j + 1) / 2 + " Comments: " + eElement.getElementsByTagName("wcm:element").item(k).getTextContent());
@@ -55,11 +73,15 @@ public class ReadXMLFile
 				}
 				System.out.println("========================================================");
 			}
+
+			// 3. WRITE OUT TO FILE
 			File f = new File("C:\\Users\\gbrunyee\\Desktop\\CMS_Test\\ES_GENERAL.new.xml");
 
 			// Use a Transformer for output
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 			Transformer transformer = tFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(f);
